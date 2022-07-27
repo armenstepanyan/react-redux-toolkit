@@ -1,36 +1,41 @@
 import React from 'react'
-import Form from './components/Form'
-import TodoItem from './components/TodoItem'
-import User from './components/User'
-import Posts from './components/Posts'
-import { useSelector } from 'react-redux'
+import FirstPage from './pages/FirstPage'
+import SecondPage from './pages/SecondPage'
+import {
+    BrowserRouter as Router,
+    Routes,
+    Route,
+    Link
+} from "react-router-dom";
 
 
 function App() {
-    const todos = useSelector(state => state.todo.todos);
+
     return (
-        <div className='min-h-screen h-full w-screen bg-indigo-400'>
-            <div className='container mx-auto px-4'>
-                <header className='flex gap-20 '>
-                    <div className='w-1/3'>
-                        <h1 className='font-bold my-5'>Redux Toolkit State Change</h1>
-                        <User />
-                    </div>
-                    <div className='w-1/3'>
-                        <h1 className='font-bold my-5'>Redux Toolkit Todo App</h1>
-                        <Form />
-                        {
-                            (todos || []).map(todo => <TodoItem key={todo.id} {...todo}/>)
-                        }
-                        
-                    </div>
-                    <div className='w-1/3'>
-                        <h1 className='font-bold my-5'>Redux Toolkit Async Thunk</h1>
-                        <Posts />
-                    </div>
-                </header>
+    <Router>
+    <div className='min-h-screen  bg-indigo-400'>
+        <nav class="bg-gray-50 dark:bg-gray-700">
+            <div class="py-3 px-4 mx-auto max-w-screen-xl md:px-6">
+                <div class="flex items-center">
+                    <ul class="flex flex-row mt-0 mr-6 space-x-8 text-sm font-medium">
+                        <li>
+                            <Link to="/" className="text-gray-900 dark:text-white hover:underline">Home</Link>
+
+                        </li>
+                        <li>
+                            <Link to="/post-list" className="text-gray-900 dark:text-white hover:underline">Post page</Link>
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </div>
+        </nav>
+
+            <Routes>
+                <Route path="/" element={<FirstPage />} />
+                <Route path="/post-list" element={<SecondPage />} />
+            </Routes>
+    </div>
+  </Router>
     )
 }
 

@@ -149,3 +149,43 @@ export const postSlice = createSlice({
 export const { setPosts, deletePost } = postSlice.actions;
 export default postSlice.reducer;
 ```
+
+Use fake json server
+```
+npm install -g json-server
+```
+
+Start server
+```
+json-server --watch db.json --port 5000
+```
+
+To refetch data again need to use `tagTypes`
+```
+export const postAPI = createApi({
+    reducerPath: 'postAPI',
+    baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:5000/' }),
+    tagTypes: ['Post'], // <-----
+    endpoints: (build) => ({
+        // query -> GET request
+        // mutation -> POST/PUT...
+        fetchAllPosts: build.query({
+            query:(limit = 5) => ({
+                url: '/posts',
+                params: {
+                    _limit: limit
+                }
+            }),
+            providesTags: ['Post'] // <-----
+        }),
+        createPost: build.mutation({
+            query: (post) => ({
+                url: '/posts',
+                method: 'POST',
+                body: post
+            }),
+            invalidatesTags: ['Post'] // <-----
+        })
+    })
+})
+```
