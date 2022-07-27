@@ -150,7 +150,7 @@ export const { setPosts, deletePost } = postSlice.actions;
 export default postSlice.reducer;
 ```
 
-Use fake json server
+### Use fake json server
 ```
 npm install -g json-server
 ```
@@ -185,7 +185,55 @@ export const postAPI = createApi({
                 body: post
             }),
             invalidatesTags: ['Post'] // <-----
+        }),
+        updatePost: build.mutation({
+            query: (post) => ({
+                url: `/posts/${post.id}`,
+                method: 'PUT',
+                body: post
+            }),
+            invalidatesTags: ['Post']
+        }),
+        deletePost: build.mutation({
+            query: (id) => ({
+                url: `/posts/${id}`,
+                method: 'DELETE'
+            }),
+            invalidatesTags: ['Post']
         })
     })
 })
+```
+PostList component
+```
+function PostList() {
+    const [limit, setLimit] = useState(5);
+    const { data: posts, isLoading, refetch } = postAPI.useFetchAllPostsQuery(limit);
+
+    const [createPost, { isLoading: isPostLoading }] = postAPI.useCreatePostMutation();
+    const [updatePost, {}] = postAPI.useUpdatePostMutation();
+    const [deletePost, {}] = postAPI.useDeletePostMutation();
+
+    const handleCreate = async () => {
+        const title = prompt('Enter post title');
+        await createPost({ title, body: title })
+    }
+
+    return (
+        <>
+            <div>PostList</div>
+            <p>
+            <button onClick={() => handleCreate()} >Create Post</button>
+            {isPostLoading && (<p>Creating post...</p>)}
+            </p>
+            { isLoading && <h3>Loading...</h3> }
+            <p>
+            </p>
+            { posts && posts.map(post => <PostListItem {...post}  key={post.id} update={(post) => updatePost(post)} remove={(id) => deletePost(id)}/>) }
+            <button onClick={() => refetch()} className="btn px-2 py-2 bg-green-500">Refetch list</button>
+        </>
+    )
+}
+
+export default PostList
 ```
